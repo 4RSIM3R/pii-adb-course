@@ -129,8 +129,8 @@ Adapted for a compressed 4-week format with maximum hands-on learning.
 
 ## Project Status
 
-- ✅ **Week 1:** Complete course materials
-- 🚧 **Week 2:** In development
+- 🚧 **Week 1:** Work In Progres
+- 📋 **Week 2:** Planned
 - 📋 **Week 3:** Planned
 - 📋 **Week 4:** Planned
 
