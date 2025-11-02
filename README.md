@@ -201,7 +201,6 @@ Created as a recreational and educational project to teach database internals to
 Ready to build a database? Start here:
 
 **[→ Course Overview](docs/README.md)**
-
 **[→ Week 1: Storage Foundation](docs/week_1/README.md)**
 
 ---
