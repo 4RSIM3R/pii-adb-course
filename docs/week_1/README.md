@@ -13,9 +13,11 @@ This module establishes the foundational storage layer infrastructure essential 
 The evolution of information storage systems reflects humanity's continuous pursuit of more efficient methods for recording and retrieving knowledge. This progression—from physical artifacts to sophisticated digital systems—provides essential context for understanding modern database architecture.
 
 **Pre-Digital Era:**
+
 Historical information storage mechanisms (clay tablets, paper ledgers, card catalogs) established fundamental organizational principles that persist in digital systems: structured records, indexing for rapid retrieval, and hierarchical categorization.
 
 **Early Digital Systems:**
+
 The advent of electronic computing introduced **flat file storage**—sequential arrangements of fixed or variable-length records stored in text or binary format. While conceptually straightforward, flat file systems exhibited significant performance limitations:
 
 - Linear search complexity (O(n)) requiring complete file traversal for single-record retrieval
@@ -24,6 +26,7 @@ The advent of electronic computing introduced **flat file storage**—sequential
 - Limited data integrity guarantees
 
 **Structured Database Era:**
+
 The 1960s witnessed the emergence of early database management systems addressing flat file limitations:
 
 - **Hierarchical databases** (IBM's Information Management System) organized data in tree structures
@@ -35,12 +38,15 @@ The 1960s witnessed the emergence of early database management systems addressin
 A fundamental paradigm shift occurred with E. F. Codd's seminal 1970 paper, "A Relational Model of Data for Large Shared Data Banks" (Communications of the ACM, 13(6), 377-387). Codd's relational model introduced critical conceptual innovations:
 
 **Logical-Physical Separation:**
+
 The relational model established clear separation between logical data representation (relations, tuples, attributes) and physical storage implementation, enabling optimization independence.
 
 **Mathematical Foundation:**
+
 Relational algebra provided formal theoretical basis for data manipulation operations, enabling query optimization and correctness verification.
 
 **Data Independence:**
+
 Applications interface with logical schema rather than physical storage details, allowing storage reorganization without application modification.
 
 ### Indexing Structures: The B-Tree Innovation
@@ -55,6 +61,7 @@ Despite the relational model's conceptual elegance, efficient implementation of 
 - Guaranteed performance bounds for search, insertion, and deletion
 
 **B+ Tree Evolution:**
+
 The B+ tree variant emerged as the dominant database indexing structure through key enhancements:
 
 - Data storage exclusively in leaf nodes
@@ -77,15 +84,19 @@ This question represents the foundational challenge in database system implement
 ### Problem Decomposition
 
 **1. Data Representation Challenge:**
+
 How can abstract logical data structures (relations, tuples, attributes) be mapped to concrete byte sequences suitable for persistent storage on block-oriented devices?
 
 **2. Physical Organization Challenge:**
+
 How should byte sequences be arranged on persistent storage to minimize access latency and maximize throughput for common access patterns?
 
 **3. Efficient Access Challenge:**
+
 How can specific data elements be located without exhaustive linear search through complete datasets?
 
 **4. Persistence and Consistency Challenge:**
+
 How can systems guarantee data durability and maintain consistency invariants across system failures, crashes, and restarts?
 
 ### Illustrative Example
@@ -406,21 +417,22 @@ The storage engine implements a layered architecture with clear separation of co
 
 **Deliverable:** B+ tree structure with functional search and traversal operations
 
-### Day 4: B+ Tree Insertion and Rebalancing
+### Day 4: B+ Tree Rebalancing
 
-**Module Problem:** How do database systems maintain balanced tree structures as data volume increases?
+**Module Problem:** How do database systems maintain balanced tree structures as data volume increases or decrease?
 
 **Learning Objectives:**
 
-- Implement key insertion algorithms for both leaf and internal nodes
-- Design and construct node splitting logic maintaining tree invariants
-- Develop split propagation mechanism for multi-level splits
+- Implement key insertion and deletion algorithms for both leaf and internal nodes
+- Implement in in-place update on leaf nodes only without updating the key
+- Design and construct node splitting and merging logic maintaining tree invariants
+- Develop split and merging propagation mechanism for multi-level splits
 - Ensure maintenance of all B+ tree structural properties
 
 **Key Concepts:**
 
-- Insertion algorithms for different node types
-- Node splitting and key redistribution
+- Insertion and deletion algorithms for different node types
+- Node splitting / merging and key redistribution
 - Parent update and propagation logic
 - Balance maintenance under growth
 
@@ -455,9 +467,11 @@ The storage engine implements a layered architecture with clear separation of co
 **Fundamental Principles:**
 
 **Page as Storage Quantum:**
+
 The page (also termed "block" in some systems) represents the fundamental unit of data transfer between persistent storage and memory. Database systems adopt fixed-size page allocation (typically 4KB, 8KB, or 16KB) to align with operating system page sizes and storage device block sizes, optimizing I/O efficiency.
 
 **Slotted Page Organization:**
+
 To accommodate variable-length records within fixed-size pages, database systems employ slotted page architecture:
 
 - Page header: Metadata including page type, free space pointer, slot count
@@ -466,6 +480,7 @@ To accommodate variable-length records within fixed-size pages, database systems
 - Free space: Grows from middle as slots and records compete for space
 
 **Design Rationale:**
+
 This indirection through slot directory enables:
 
 - Efficient variable-length record storage
@@ -497,9 +512,11 @@ When buffer pool reaches capacity and requires frame for new page:
 **Page Lifecycle Management:**
 
 **Pinning Protocol:**
+
 Pages under active use are "pinned" (reference count > 0) and protected from eviction. Callers must unpin pages after use, enabling eviction eligibility.
 
 **Dirty Bit Tracking:**
+
 Modified pages are marked dirty, requiring write-back before eviction to maintain persistence.
 
 ### Domain 3: B+ Tree Indexing Structure
@@ -544,6 +561,7 @@ When inserting key into full node:
 **Access Pattern Characteristics:**
 
 **Sequential I/O:**
+
 Reading consecutive blocks achieves high throughput through:
 
 - Prefetching and read-ahead optimizations
@@ -551,6 +569,7 @@ Reading consecutive blocks achieves high throughput through:
 - Typical throughput: 100-500 MB/s (SSD/HDD)
 
 **Random I/O:**
+
 Non-sequential access patterns suffer from:
 
 - Individual seek cost per operation
@@ -589,6 +608,7 @@ Students beginning this module must possess foundational competencies in the fol
 - **Complexity analysis:** Big-O notation, analyzing algorithm time and space requirements
 
 **Application in Module:**
+
 Students will extend tree structure knowledge to implement B+ trees, apply complexity analysis to evaluate indexing performance, and utilize arrays for page slot directories.
 
 ### File I/O and Binary Operations
@@ -613,6 +633,7 @@ File I/O capabilities are fundamental to disk manager implementation, enabling p
 - **Fixed versus variable-length encoding:** Trade-offs in representation strategies
 
 **Application in Module:**
+
 Serialization knowledge enables implementation of page persistence mechanisms, converting in-memory structures to disk-storable byte sequences.
 
 ### Programming Language Proficiency
@@ -660,6 +681,7 @@ Students typically encounter the following technical challenges during module im
 ### Challenge 1: Memory Lifecycle Management
 
 **Problem Description:**
+
 Buffer pool implementation requires careful management of page lifetimes, particularly in Rust's ownership system. Pages may be simultaneously referenced by buffer pool, B+ tree nodes, and application code.
 
 **Common Issues:**
@@ -677,6 +699,7 @@ Buffer pool implementation requires careful management of page lifetimes, partic
 ### Challenge 2: Pointer Abstraction in Persistent Structures
 
 **Problem Description:**
+
 In-memory pointers (memory addresses) cannot be directly persisted to disk. Database systems require stable identifiers surviving system restarts.
 
 **Common Issues:**
@@ -694,6 +717,7 @@ In-memory pointers (memory addresses) cannot be directly persisted to disk. Data
 ### Challenge 3: Binary Serialization and Deserialization
 
 **Problem Description:**
+
 Converting complex data structures to flat byte sequences requires attention to encoding details, alignment requirements, and cross-platform compatibility.
 
 **Common Issues:**
@@ -713,6 +737,7 @@ Converting complex data structures to flat byte sequences requires attention to 
 ### Challenge 4: B+ Tree Debugging and Visualization
 
 **Problem Description:**
+
 B+ tree behavior, particularly during splitting and rebalancing, can be difficult to understand without visualization. Bugs may manifest only with specific insertion sequences.
 
 **Common Issues:**
@@ -733,6 +758,7 @@ B+ tree behavior, particularly during splitting and rebalancing, can be difficul
 ### Challenge 5: Testing Persistence and Recovery
 
 **Problem Description:**
+
 Verifying that data persists correctly across restarts requires systematic testing approach.
 
 **Common Issues:**
@@ -962,5 +988,3 @@ Students should proceed to the first instructional day:
 **[→ Day 1: Storage Fundamentals](day_1.md)**
 
 ---
-
-**Note on Academic Integrity:** This module requires substantial independent implementation. While conceptual discussions with peers are encouraged, all submitted code must represent individual work. Copying implementations from external sources or other students constitutes academic misconduct.
