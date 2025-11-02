@@ -1,42 +1,76 @@
-# Week 1: Storage Foundation - Pages, Files, and B+ Trees
+# Week 1: Storage Foundation – Pages, Files, and B+ Trees
 
 ## Week Overview
 
-Welcome to Week 1! This week, you'll build the **storage engine**—the foundational layer of any database system. By the end of this week, you'll have a working storage system that can efficiently store and retrieve data using disk-based B+ tree indexes.
+Welcome to Week 1. This week focuses on building the **storage engine**—the foundational layer of any database system. By the end of the week, you will have implemented a functional storage subsystem capable of efficiently storing and retrieving large volumes of data using disk-based **B+ tree indexes**.
 
-### The Core Problem
+---
 
-**How do databases store millions of records on disk and retrieve them in milliseconds?**
+## From Information Storage to Modern Databases
 
-When you execute `SELECT * FROM users WHERE id = 42`, the database doesn't scan through millions of records. Instead, it uses sophisticated data structures and storage techniques to find exactly what you need, fast. This week, you'll implement these techniques yourself.
+Humanity’s progress has always been tied to how effectively it can record and retrieve information. From clay tablets and handwritten ledgers to digital spreadsheets, each generation has developed better ways to **structure** and **access** data.
 
-## What You'll Build This Week
+When computers emerged, the same principle continued. Early digital systems stored data in **flat files**—simple text or binary files containing a sequence of records. Although straightforward, flat files had major drawbacks: searching for one record meant scanning the entire file, and making updates often required rewriting it from scratch.
 
-By Friday, you'll have a working storage engine with:
+As data grew, it became clear that a more structured approach was needed. The 1960s introduced **hierarchical** and **network** databases (e.g., IBM’s IMS and CODASYL systems), which arranged data in linked records, enabling faster access but limited flexibility.
 
-1. **Page-Based Storage System**: Fixed-size pages (4KB) that store multiple records
-2. **Slotted Page Structure**: Efficient way to pack variable-length records into pages
-3. **Buffer Pool Manager**: In-memory cache for disk pages with LRU eviction
-4. **B+ Tree Index**: Self-balancing tree structure for fast lookups
-5. **Disk Manager**: Interface for reading/writing pages to disk files
+A major conceptual leap occurred with **E. F. Codd’s relational model** (_“A Relational Model of Data for Large Shared Data Banks,”_ 1970). Codd proposed that data could be organized in **tables (relations)** governed by formal rules, separating **logical structure** from **physical storage**. This abstraction laid the foundation for modern relational databases.
+
+Even so, storing large, structured datasets efficiently remained a challenge. Researchers such as **Rudolf Bayer and Edward McCreight (1972)** introduced the **B-Tree**, a self-balancing tree structure designed for disk-based indexing (_“Organization and Maintenance of Large Ordered Indexes,” Acta Informatica_). Its evolution, the **B+ Tree**, improved data range queries and remains the dominant indexing structure in databases today.
+
+This historical journey—from unstructured flat files to structured, indexed systems—sets the foundation for your work this week: building the storage layer that enables efficient, structured data access.
+
+---
+
+## The Core Problem
+
+**How can we store structured data on disk—and read or update it efficiently?**
+
+This question lies at the heart of database systems. To answer it, we need to consider four essential aspects:
+
+1. **Representation:** How can structured data (such as tables and records) be translated into bytes on disk?
+2. **Organization:** How can these bytes be arranged so the database can quickly find what it needs?
+3. **Access:** How can we locate a specific piece of data without reading the entire file?
+4. **Persistence:** How can the system ensure data remains consistent and recoverable after crashes or restarts?
+
+For example, imagine a student database with thousands of entries. When a user wants to retrieve information about a specific student (say, a student with ID number **42**), the database must avoid reading every record in order. Instead, it uses a **storage structure** that knows _where_ to find the relevant data quickly.
+
+In this week’s module, you will design and implement the key mechanisms that make this possible: **page-based storage**, **in-memory buffering**, and **B+ tree indexing**.
+
+---
+
+## What You Will Build
+
+By the end of Week 1, you will have implemented the following components:
+
+1. **Page-Based Storage System:** Fixed-size pages (4KB) for storing and organizing records.
+2. **Slotted Page Structure:** A layout that supports variable-length records efficiently.
+3. **Buffer Pool Manager:** An in-memory cache that minimizes disk I/O using an LRU (Least Recently Used) policy.
+4. **B+ Tree Index:** A balanced search tree that enables fast lookups for large datasets.
+5. **Disk Manager:** An abstraction layer that handles reading and writing data to disk.
 
 ### End-of-Week Demonstration
 
-You'll be able to:
+By Friday, your system will:
 
-- Insert key-value pairs: `storage.insert(key, value)`
-- Retrieve values by key: `storage.get(key) → value`
-- Handle thousands of records efficiently
-- Persist data to disk and reload it
-- See B+ tree splits and node management in action
+- Insert and retrieve records efficiently using a key-based interface
+- Manage thousands of records with minimal latency
+- Persist data to disk and reload it after restart
+- Demonstrate how B+ tree nodes split and remain balanced under growth
+
+---
 
 ## Why These Concepts Matter
 
-Every major database (PostgreSQL, MySQL, SQLite, Oracle) uses these exact concepts:
+Every major database—**PostgreSQL**, **MySQL**, **SQLite**, **Oracle**—is built upon these foundational principles:
 
-- **Pages**: The fundamental unit of storage (PostgreSQL uses 8KB pages, MySQL uses 16KB)
-- **Buffer Pool**: Keeps frequently used pages in memory
-- **B+ Trees**: Most common index structure in production databases
+- **Pages:** The smallest unit of data read or written to disk (e.g., PostgreSQL uses 8KB, MySQL uses 16KB).
+- **Buffer Pools:** Memory caches that store recently used pages to reduce disk reads.
+- **B+ Trees:** The most common indexing structure for efficient data retrieval.
+
+A strong grasp of these ideas will allow you to understand and optimize how real databases achieve high performance and reliability.
+
+---
 
 ## Week 1 Architecture
 
@@ -68,178 +102,198 @@ Every major database (PostgreSQL, MySQL, SQLite, Oracle) uses these exact concep
           [disk file]
 ```
 
+---
+
 ## Learning Progression
 
-### Day 1: Storage Fundamentals
+### Day 1 – Storage Fundamentals
 
-**Problem**: How do we organize data on disk?
+**Problem:** How should structured data be physically organized on disk?
 
-- Understand why databases use pages
-- Learn about slotted page architecture
-- Design the disk layout
+- Learn why databases use pages.
+- Design a slotted page structure and metadata layout.
+- Define how data is serialized into bytes.
 
-### Day 2: Buffer Pool Management
+### Day 2 – Buffer Pool Management
 
-**Problem**: How do we avoid expensive disk I/O?
+**Problem:** How can we reduce the cost of accessing disk data?
 
-- Implement page caching in memory
-- Build LRU eviction policy
-- Handle page pinning and unpinning
+- Implement a memory cache for database pages.
+- Apply an LRU (Least Recently Used) eviction policy.
+- Manage page pinning, unpinning, and flushing.
 
-### Day 3: B+ Tree Foundation
+### Day 3 – B+ Tree Fundamentals
 
-**Problem**: How do we find data quickly?
+**Problem:** How can we locate data efficiently?
 
-- Understand B+ tree structure and properties
-- Design internal vs leaf nodes
-- Implement tree traversal (search)
+- Understand B+ tree properties and structure.
+- Differentiate between internal and leaf nodes.
+- Implement search and traversal logic.
 
-### Day 4: B+ Tree Modifications
+### Day 4 – B+ Tree Insertion and Maintenance
 
-**Problem**: How do we handle insertions and maintain balance?
+**Problem:** How do we maintain balance as data grows?
 
-- Implement B+ tree insertion
-- Handle node splits
-- Maintain tree properties
+- Implement insertion and splitting logic.
+- Handle propagation and rebalancing.
+- Maintain B+ tree invariants.
 
-### Day 5: Integration & Testing
+### Day 5 – Integration and Testing
 
-**Problem**: Does everything work together?
+**Problem:** How do all components work together as a system?
 
-- Integration testing
-- Performance benchmarking
-- Code review and refactoring
+- Integrate the disk manager, buffer pool, and index layers.
+- Test data persistence and performance.
+- Conduct benchmarking and review.
 
-## Key Concepts You'll Master
+---
+
+## Core Concepts
 
 ### 1. Page-Oriented Architecture
 
-- Fixed-size pages (typically 4KB or 8KB)
-- Page headers and metadata
-- Slotted pages for variable-length records
-- Page layout optimization
+- Pages as fixed-size storage units (typically 4KB or 8KB).
+- Page headers, slots, and record offsets.
+- Efficient handling of variable-length records.
+- Optimizing page layouts for I/O efficiency.
 
 ### 2. Buffer Pool Management
 
-- Page replacement policies (LRU)
-- Pin/unpin mechanism to prevent eviction
-- Dirty page tracking and flushing
-- Page table (maps page IDs to frames)
+- Caching pages in memory to reduce I/O cost.
+- LRU page replacement policy.
+- Pin/unpin operations for page usage control.
+- Dirty page tracking and write-back mechanisms.
 
 ### 3. B+ Tree Structure
 
-- Internal nodes (routing/navigation)
-- Leaf nodes (actual data storage)
-- Order/fanout of the tree
-- Invariants and properties
+- Internal nodes guide searches; leaf nodes hold data.
+- Keys and pointers for navigation.
+- Leaf node chaining for efficient range queries.
+- Logarithmic search and insertion complexity.
 
-### 4. B+ Tree Operations
+### 4. Disk I/O and File Management
 
-- Search: O(log n) lookup time
-- Insertion: Maintaining balance through splits
-- Node structure: Keys and pointers
-- Leaf node chaining for range scans
+- Sequential vs. random I/O operations.
+- Page alignment and file organization.
+- Introduction to write-ahead logging and crash recovery.
 
-### 5. Disk I/O Fundamentals
+---
 
-- Sequential vs random I/O
-- Page alignment
-- File-based storage
-- Crash recovery basics (write-ahead logging preview)
+## Prerequisite Knowledge
 
-## Prerequisites Refresher
+Before beginning this module, you should be comfortable with:
 
-Before diving in, make sure you're comfortable with:
+- **Data Structures:** Arrays, linked lists, and trees.
+- **File I/O:** Reading and writing binary data.
+- **Binary Encoding:** Representing structured data as bytes.
 
-- **Rust Basics**: Ownership, borrowing, traits, Result types
-- **Data Structures**: Arrays, linked lists, trees
-- **File I/O**: Reading and writing binary data
-- **Binary Representations**: How data is stored in bytes
+---
 
-## Success Metrics
+## Expected Outcomes
 
-By the end of Week 1, you should be able to:
+By the end of Week 1, you will be able to:
 
-✅ Explain why databases use page-based storage
-✅ Describe how a buffer pool reduces disk I/O
-✅ Draw a B+ tree structure on paper
-✅ Implement B+ tree insertion with node splits
-✅ Store and retrieve 10,000+ records efficiently
-✅ Measure and optimize storage performance
+- Explain how structured data is represented and stored on disk.
+- Describe how a buffer pool reduces disk I/O.
+- Implement a B+ tree and explain its role in indexing.
+- Efficiently store and retrieve large datasets.
+- Measure and reason about storage performance.
 
-## Common Challenges This Week
+---
 
-1. **Managing Lifetimes**: Buffer pool requires careful lifetime management
-2. **Understanding Pointers**: B+ tree uses page IDs as "pointers"
-3. **Binary Serialization**: Converting structs to/from bytes
-4. **Debugging Tree Splits**: Visualizing what happens during insertions
+## Common Technical Challenges
 
-Don't worry—we'll tackle each of these systematically!
+1. **Memory Management:** Handling lifetimes in the buffer pool safely.
+2. **Pointer Abstraction:** Using page IDs instead of raw pointers for tree navigation.
+3. **Serialization:** Converting data structures to and from binary format.
+4. **B+ Tree Debugging:** Visualizing insertions and node splits.
 
-## Real-World Context
+---
 
-**PostgreSQL** uses this exact architecture:
+## Real-World Parallels
 
-- Pages called "blocks" (8KB)
-- Buffer pool called "shared buffers"
-- B+ tree indexes (called "btree" in PostgreSQL)
+- **PostgreSQL:**
 
-**MySQL/InnoDB**:
+  - 8KB “blocks” as storage pages.
+  - Shared buffer cache for performance.
+  - B+ tree indexes for most query plans.
 
-- 16KB pages
-- Buffer pool with LRU eviction
-- Clustered B+ tree indexes (data stored in leaf nodes)
+- **MySQL/InnoDB:**
+  - 16KB pages and clustered B+ tree indexes.
+  - Sophisticated buffer pool with adaptive flushing.
+  - Integrated logging and recovery mechanisms.
 
-You're learning production-grade concepts!
+The concepts you learn here are directly applied in these production systems.
 
-## Week 1 Schedule
+---
 
-| Day       | Focus                              | Deliverable                    |
-| --------- | ---------------------------------- | ------------------------------ |
-| **Day 1** | Storage architecture & page design | Page structure design document |
-| **Day 2** | Buffer pool & disk manager         | Working buffer pool with LRU   |
-| **Day 3** | B+ tree structure & search         | B+ tree that can search        |
-| **Day 4** | B+ tree insertion & splits         | B+ tree that can insert        |
-| **Day 5** | Testing & integration              | Complete storage engine        |
+## Weekly Schedule
 
-## Materials Needed
+| Day       | Focus Area                           | Deliverable                       |
+| --------- | ------------------------------------ | --------------------------------- |
+| **Day 1** | Storage architecture and page design | Page layout specification         |
+| **Day 2** | Buffer pool and disk manager         | Functional buffer pool with LRU   |
+| **Day 3** | B+ tree structure and search         | Working search and traversal code |
+| **Day 4** | B+ tree insertion and balancing      | Insert with node-split support    |
+| **Day 5** | Testing and integration              | Complete working storage engine   |
 
-- Rust development environment
-- Text editor/IDE
-- Hex editor (optional, for inspecting disk files)
-- Paper and pencil (for drawing B+ trees!)
+---
 
-## Tips for Success
+## Materials Required
 
-1. **Draw First**: Sketch out page layouts and tree structures on paper
-2. **Test Incrementally**: Test each function as you write it
-3. **Use Debug Prints**: Visualize your B+ tree structure
-4. **Start Simple**: Get basic functionality working before optimizing
-5. **Ask Questions**: These concepts are challenging—that's normal!
+- Text editor or IDE (e.g., VS Code, JetBrains)
+- Hex editor (optional, for inspecting binary files)
+- Paper or whiteboard (for sketching B+ trees and layouts)
+
+---
+
+## Study and Development Practices
+
+1. **Visualize Before You Code:** Draw diagrams of page layouts and trees.
+2. **Test Incrementally:** Verify small components before integration.
+3. **Use Logs and Debug Output:** Track how pages and trees change.
+4. **Prioritize Correctness Before Optimization:** Functionality first, speed later.
+5. **Collaborate and Discuss:** Engage with peers to reinforce understanding.
+
+---
+
+## Glossary of Key Terms
+
+| Term                          | Definition                                                                             |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
+| **Record**                    | A single piece of data stored in a table (e.g., one student’s information).            |
+| **Page**                      | A fixed-size block of data that the database reads or writes to disk in one operation. |
+| **Buffer Pool**               | A memory cache that holds recently used pages to reduce disk access time.              |
+| **Index**                     | A data structure that accelerates lookups by mapping keys to data locations.           |
+| **B+ Tree**                   | A balanced search tree used in databases for efficient lookup and range queries.       |
+| **LRU (Least Recently Used)** | A caching policy that evicts the least recently accessed item first.                   |
+| **Disk I/O**                  | Input/output operations that read from or write to disk storage.                       |
+| **Serialization**             | The process of converting structured data into a byte stream for storage.              |
+
+---
 
 ## Looking Ahead
 
-Week 1's storage engine becomes the foundation for:
+The storage engine you build this week will serve as the foundation for later modules:
 
-- **Week 2**: Tables and records built on top of pages
-- **Week 3**: Transaction log stored in pages
-- **Week 4**: Join algorithms using buffer pool
+- **Week 2:** Query execution built atop pages and indexes.
+- **Week 3:** Transaction management and concurrency.
+- **Week 4:** Query optimization and cost-based planning.
 
-Every line of code you write this week will be used and extended in future weeks.
-
----
-
-## Ready to Start?
-
-Each day builds on the previous day. Start with Day 1 and work through systematically. By Friday, you'll have built something impressive!
-
-**[→ Day 1: Storage Fundamentals](day_1.md)**
+Each new layer builds upon the previous one, forming a complete, functioning database system.
 
 ---
 
-## Additional Resources
+## Additional References
 
-- [CMU 15-445 Storage Lecture](https://15445.courses.cs.cmu.edu/)
-- [Database Internals Book](https://www.databass.dev/) - Chapter 3 on B-Trees
-- [PostgreSQL Internals](https://www.postgresql.org/docs/current/storage.html)
-- [Rust Binary Serialization](https://doc.rust-lang.org/std/io/)
+- Codd, E. F. (1970). _A Relational Model of Data for Large Shared Data Banks._ _Communications of the ACM._
+- Bayer, R., & McCreight, E. M. (1972). _Organization and Maintenance of Large Ordered Indexes._ _Acta Informatica._
+- Garcia-Molina, H., Ullman, J. D., & Widom, J. (2008). _Database Systems: The Complete Book._ Pearson.
+- Hellerstein, J. M., & Stonebraker, M. (2005). _Readings in Database Systems (The Red Book)._ MIT Press.
+- Kleppmann, M. (2017). _Designing Data-Intensive Applications._ O’Reilly Media.
+- Petrov, A. (2020). _Database Internals._ O’Reilly Media.
+- Carnegie Mellon University, _15-445/645: Database Systems_ (Lecture Notes on Storage).
+
+---
+
+**Next Step:** [→ Day 1: Storage Fundamentals](day_1.md)
