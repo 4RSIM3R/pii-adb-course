@@ -17,25 +17,21 @@ By the end of this course, you'll have:
 ### Week 1: Storage Foundation
 
 Build the storage layer with page-based disk I/O, buffer pool management, and B+ tree indexes.
-
 **Deliverable:** A storage engine that can efficiently store and retrieve 10,000+ records.
 
 ### Week 2: Query Execution
 
 Implement a SQL parser and query executor supporting basic CRUD operations on tables.
-
 **Deliverable:** A database that executes SELECT, INSERT, UPDATE, and DELETE statements.
 
 ### Week 3: Transactions and MVCC
 
 Add Multi-Version Concurrency Control (MVCC) for ACID transactions without locks.
-
 **Deliverable:** A transactional database supporting concurrent reads and writes.
 
 ### Week 4: Query Optimization and Joins
 
 Implement join algorithms (nested loop, hash join) and a cost-based query optimizer.
-
 **Deliverable:** A complete RDBMS with multi-table joins and query optimization.
 
 ## Learning Philosophy
