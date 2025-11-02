@@ -127,17 +127,6 @@ Adapted for a compressed 4-week format with maximum hands-on learning.
 - Query plan selection
 - Index selection strategies
 
-## Why Rust?
-
-Rust provides:
-
-- **Memory safety** without garbage collection
-- **Performance** comparable to C/C++
-- **Concurrency** without data races
-- **Modern tooling** and package management
-
-These features make Rust ideal for building database systems where correctness, performance, and safety are critical.
-
 ## Project Status
 
 - ✅ **Week 1:** Complete course materials
@@ -200,8 +189,8 @@ Created as a recreational and educational project to teach database internals to
 
 Ready to build a database? Start here:
 
-**[→ Course Overview](docs/README.md)**
-**[→ Week 1: Storage Foundation](docs/week_1/README.md)**
+- **[→ Course Overview](docs/README.md)**
+- **[→ Week 1: Storage Foundation](docs/week_1/README.md)**
 
 ---
 
